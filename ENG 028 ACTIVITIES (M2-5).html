@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENG 028 – Module Quiz</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #1a202c; min-height: 100vh; }
+
+  /* ── Header ── */
+  .site-header { background: #1F3864; color: #fff; padding: 1.2rem 2rem; display: flex; align-items: center; gap: 1rem; }
+  .site-header h1 { font-size: 1.15rem; font-weight: 600; }
+  .site-header p  { font-size: 0.82rem; opacity: 0.75; margin-top: 2px; }
+  .badge { background: #f9c545; color: #1F3864; font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+
+  /* ── Module tabs ── */
+  .tabs { display: flex; background: #fff; border-bottom: 2px solid #e2e8f0; overflow-x: auto; }
+  .tab-btn { flex: 1; min-width: 120px; padding: 0.85rem 0.5rem; border: none; background: transparent; font-size: 0.82rem; font-weight: 600; color: #718096; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .2s; }
+  .tab-btn:hover { color: #1F3864; background: #f7f9fc; }
+  .tab-btn.active { color: #1F3864; border-bottom-color: #1F3864; background: #fff; }
+  .tab-btn .tab-score { display: block; font-size: 0.7rem; font-weight: 400; margin-top: 2px; color: #a0aec0; }
+  .tab-btn.done .tab-score { color: #38a169; }
+
+  /* ── Layout ── */
+  .main { max-width: 780px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  .module-panel { display: none; }
+  .module-panel.active { display: block; }
+
+  /* ── Module intro card ── */
+  .mod-intro { background: #fff; border-radius: 12px; border-left: 5px solid #1F3864; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; }
+  .mod-intro h2 { font-size: 1.05rem; color: #1F3864; margin-bottom: 4px; }
+  .mod-intro p  { font-size: 0.85rem; color: #4a5568; }
+
+  /* ── Section label ── */
+  .section-label { font-size: 0.78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #1F3864; background: #ebf0fb; padding: 6px 14px; border-radius: 20px; display: inline-block; margin-bottom: 1rem; }
+
+  /* ── Question card ── */
+  .q-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.2rem 1.5rem; margin-bottom: 1rem; transition: border-color .2s; }
+  .q-card.correct  { border-color: #38a169; background: #f0fff4; }
+  .q-card.wrong    { border-color: #e53e3e; background: #fff5f5; }
+  .q-num  { font-size: 0.72rem; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+  .q-text { font-size: 0.95rem; font-weight: 500; color: #1a202c; margin-bottom: 1rem; line-height: 1.5; }
+  .passage { background: #fffde7; border-left: 4px solid #f9c545; padding: 0.8rem 1rem; border-radius: 8px; font-size: 0.88rem; font-style: italic; color: #4a5568; margin-bottom: 1rem; line-height: 1.6; }
+
+  /* ── Matching ── */
+  .match-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .match-left  { flex: 1; min-width: 200px; font-size: 0.88rem; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; color: #2d3748; }
+  .match-arrow { color: #a0aec0; font-size: 1rem; }
+  .match-right { flex: 1; min-width: 200px; }
+  .match-right select { width: 100%; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.86rem; background: #fff; color: #2d3748; cursor: pointer; }
+  .match-right select:focus { outline: none; border-color: #1F3864; box-shadow: 0 0 0 3px rgba(31,56,100,.1); }
+
+  /* ── Fill in the blank ── */
+  .fib-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 0.92rem; line-height: 2; }
+  .fib-input { border: none; border-bottom: 2px solid #1F3864; background: transparent; font-size: 0.92rem; color: #1a202c; width: 180px; padding: 2px 4px; text-align: center; outline: none; }
+  .fib-input:focus { border-bottom-color: #f9c545; }
+
+  /* ── Error correction ── */
+  .err-sentence { font-size: 0.9rem; color: #2d3748; background: #f7fafc; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; border: 1px solid #e2e8f0; line-height: 1.5; }
+  .corr-row { display: flex; align-items: center; gap: 8px; }
+  .corr-label { font-size: 0.8rem; font-weight: 600; color: #4a5568; white-space: nowrap; }
+  .corr-input { flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; font-size: 0.88rem; color: #1a202c; outline: none; }
+  .corr-input:focus { border-color: #1F3864; box-shadow: 0 0 0 3px rgba(31,56,100,.1); }
+
+  /* ── Sentence transformation ── */
+  .transform-original { font-size: 0.88rem; color: #4a5568; font-style: italic; margin-bottom: 8px; padding: 8px 12px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+  .transform-hint { font-size: 0.78rem; color: #718096; margin-bottom: 8px; }
+  .full-input { width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; padding: 9px 12px; font-size: 0.88rem; color: #1a202c; outline: none; }
+  .full-input:focus { border-color: #1F3864; box-shadow: 0 0 0 3px rgba(31,56,100,.1); }
+
+  /* ── Spot & classify ── */
+  .spot-sent { font-size: 0.9rem; margin-bottom: 8px; color: #2d3748; line-height: 1.5; }
+  .spot-row   { display: flex; gap: 10px; flex-wrap: wrap; }
+  .spot-part  { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 140px; }
+  .spot-part label { font-size: 0.75rem; font-weight: 600; color: #718096; }
+  .spot-part input, .spot-part select { border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; font-size: 0.85rem; outline: none; }
+  .spot-part input:focus, .spot-part select:focus { border-color: #1F3864; }
+
+  /* ── Verb table ── */
+  .verb-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .verb-table th { background: #1F3864; color: #fff; padding: 8px 10px; text-align: left; font-weight: 600; }
+  .verb-table td { border: 1px solid #e2e8f0; padding: 6px 8px; vertical-align: middle; }
+  .verb-table tr:nth-child(even) td { background: #f7fafc; }
+  .verb-table td input, .verb-table td select { width: 100%; border: 1px solid #cbd5e0; border-radius: 6px; padding: 5px 8px; font-size: 0.82rem; outline: none; background: #fff; }
+  .verb-table td input:focus, .verb-table td select:focus { border-color: #1F3864; }
+
+  /* ── Word bank ── */
+  .word-bank { background: #ebf0fb; border: 1px solid #c3d1ef; border-radius: 10px; padding: 10px 16px; margin-bottom: 1rem; font-size: 0.85rem; color: #1F3864; }
+  .word-bank strong { font-weight: 700; }
+
+  /* ── Feedback ── */
+  .fb { margin-top: 8px; padding: 8px 12px; border-radius: 8px; font-size: 0.82rem; display: none; }
+  .fb.correct { background: #c6f6d5; color: #22543d; display: block; }
+  .fb.wrong   { background: #fed7d7; color: #742a2a; display: block; }
+  .fb strong  { font-weight: 700; }
+
+  /* ── Submit button ── */
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1.5rem; }
+  .btn-submit { background: #1F3864; color: #fff; border: none; border-radius: 10px; padding: 12px 28px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+  .btn-submit:hover { background: #2a4a85; }
+
+  /* ── Score banner ── */
+  .score-banner { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.4rem 1.8rem; margin-bottom: 1.5rem; display: none; }
+  .score-banner.show { display: block; }
+  .score-banner h3 { font-size: 1rem; color: #1F3864; margin-bottom: 10px; }
+  .score-bar-wrap { background: #e2e8f0; border-radius: 20px; height: 16px; overflow: hidden; margin-bottom: 8px; }
+  .score-bar { height: 100%; border-radius: 20px; transition: width 1s ease; }
+  .score-meta { display: flex; justify-content: space-between; font-size: 0.82rem; color: #718096; }
+  .score-big { font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+  .score-msg { font-size: 0.88rem; color: #4a5568; }
+
+  /* ── Final summary ── */
+  #summary-panel { display: none; }
+  #summary-panel.active { display: block; }
+  .summary-card { background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 2rem; text-align: center; margin-bottom: 1.5rem; }
+  .summary-card .total-score { font-size: 3rem; font-weight: 700; color: #1F3864; }
+  .summary-card .total-label { font-size: 1rem; color: #718096; margin-bottom: 1rem; }
+  .mod-scores-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 1rem; }
+  .mod-score-cell { background: #f7fafc; border-radius: 10px; padding: 1rem; text-align: center; }
+  .mod-score-cell .mscore { font-size: 1.5rem; font-weight: 700; color: #1F3864; }
+  .mod-score-cell .mlabel { font-size: 0.78rem; color: #718096; margin-top: 2px; }
+  .try-again-btn { background: #1F3864; color: #fff; border: none; border-radius: 10px; padding: 13px 32px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1rem; }
+  .try-again-btn:hover { background: #2a4a85; }
+  .emoji-result { font-size: 3rem; margin-bottom: 0.5rem; }
+
+  .progress-dots { display: flex; gap: 6px; margin-top: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; }
+  .dot.done { background: #38a169; }
+  .dot.wrong { background: #e53e3e; }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div style="flex:1">
+    <h1>ENG 028 – Structures of English</h1>
+    <p>Self-Grading Activity &nbsp;|&nbsp; Modules 2 · 3 · 4 · 5</p>
+  </div>
+  <span class="badge">80 pts total</span>
+</div>
+
+<div class="tabs" id="tabBar">
+  <button class="tab-btn active" onclick="switchTab(-1)" id="tabBtnInfo">
+    👤 My Info<span class="tab-score" id="tabScoreInfo" style="color:#e53e3e">Required</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab(0)" id="tabBtn0">
+    Module 2<span class="tab-score" id="tabScore0">Not yet submitted</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab(1)" id="tabBtn1">
+    Module 3<span class="tab-score" id="tabScore1">Not yet submitted</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab(2)" id="tabBtn2">
+    Module 4<span class="tab-score" id="tabScore2">Not yet submitted</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab(3)" id="tabBtn3">
+    Module 5<span class="tab-score" id="tabScore3">Not yet submitted</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab(4)" id="tabBtn4">
+    📊 Results<span class="tab-score" id="tabScore4"></span>
+  </button>
+</div>
+
+<div class="main">
+
+<!-- ════════════════════════════════════════
+     INFO PANEL
+════════════════════════════════════════ -->
+<div class="module-panel active" id="panelInfo">
+  <div class="mod-intro" style="border-left-color:#f9c545">
+    <h2 style="color:#92640a">Before you begin</h2>
+    <p>Please enter your name and email address. This information will appear on your Results page.</p>
+  </div>
+
+  <div class="q-card" style="max-width:500px">
+    <div style="margin-bottom:1.2rem">
+      <label style="display:block;font-size:.8rem;font-weight:700;color:#4a5568;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Full Name <span style="color:#e53e3e">*</span></label>
+      <input type="text" id="studentName" placeholder="e.g. Maria Santos" style="width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;font-size:.95rem;outline:none;color:#1a202c" oninput="checkInfoReady()">
+    </div>
+    <div style="margin-bottom:1.5rem">
+      <label style="display:block;font-size:.8rem;font-weight:700;color:#4a5568;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Email Address <span style="color:#e53e3e">*</span></label>
+      <input type="email" id="studentEmail" placeholder="e.g. mariasantos@email.com" style="width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;font-size:.95rem;outline:none;color:#1a202c" oninput="checkInfoReady()">
+    </div>
+    <div id="infoError" style="display:none;font-size:.82rem;color:#e53e3e;margin-bottom:10px">Please fill in both your name and a valid email address.</div>
+    <button onclick="confirmInfo()" style="background:#1F3864;color:#fff;border:none;border-radius:10px;padding:12px 28px;font-size:.95rem;font-weight:600;cursor:pointer;width:100%">Start Quiz →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MODULE 2
+════════════════════════════════════════ -->
+<div class="module-panel" id="panel0">
+  <div class="mod-intro">
+    <h2>Module 2 &nbsp;·&nbsp; Building Blocks of Language &amp; Word Formation</h2>
+    <p>Part 1: Matching &nbsp;|&nbsp; Part 2: Fill in the Blank &nbsp;|&nbsp; 20 points</p>
+  </div>
+
+  <div class="score-banner" id="score0">
+    <h3>Your Score</h3>
+    <div class="score-big" id="scoreNum0"></div>
+    <div class="score-bar-wrap"><div class="score-bar" id="scoreBar0"></div></div>
+    <div class="score-meta"><span id="scoreFrac0"></span><span id="scorePct0"></span></div>
+    <div class="score-msg" id="scoreMsg0" style="margin-top:8px"></div>
+  </div>
+
+  <span class="section-label">Part 1 – Matching (10 pts)</span>
+  <p style="font-size:.85rem;color:#4a5568;margin-bottom:1rem;">Match each term or example in Column A with the correct word formation process in Column B.</p>
+
+  <!-- Q1 -->
+  <div class="q-card" id="q0_1">
+    <div class="q-num">Question 1 &nbsp;·&nbsp; 2 pts</div>
+    <div class="match-row">
+      <div class="match-left">"brunch" (breakfast + lunch)</div>
+      <div class="match-arrow">→</div>
+      <div class="match-right">
+        <select id="m0_1">
+          <option value="">— select —</option>
+          <option value="A">A. Clipping</option>
+          <option value="B">B. Blending</option>
+          <option value="C">C. Borrowing</option>
+          <option value="D">D. Acronym</option>
+          <option value="E">E. Conversion</option>
+        </select>
+      </div>
+    </div>
+    <div class="fb" id="fb0_1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="q0_2">
+    <div class="q-num">Question 2 &nbsp;·&nbsp; 2 pts</div>
+    <div class="match-row">
+      <div class="match-left">"phone" (from telephone)</div>
+      <div class="match-arrow">→</div>
+      <div class="match-right">
+        <select id="m0_2">
+          <option value="">— select —</option>
+          <option value="A">A. Clipping</option>
+          <option value="B">B. Blending</option>
+          <option value="C">C. Borrowing</option>
+          <option value="D">D. Acronym</option>
+          <option value="E">E. Conversion</option>
+        </select>
+      </div>
+    </div>
+    <div class="fb" id="fb0_2"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="q0_3">
+    <div class="q-num">Question 3 &nbsp;·&nbsp; 2 pts</div>
+    <div class="match-row">
+      <div class="match-left">"NASA" (National Aeronautics and Space Administration)</div>
+      <div class="match-arrow">→</div>
+      <div class="match-right">
+        <select id="m0_3">
+          <option value="">— select —</option>
+          <option value="A">A. Clipping</option>
+          <option value="B">B. Blending</option>
+          <option value="C">C. Borrowing</option>
+          <option value="D">D. Acronym</option>
+          <option value="E">E. Conversion</option>
+        </select>
+      </div>
+    </div>
+    <div class="fb" id="fb0_3"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="q0_4">
+    <div class="q-num">Question 4 &nbsp;·&nbsp; 2 pts</div>
+    <div class="match-row">
+      <div class="match-left">"Google" used as a verb (to google something)</div>
+      <div class="match-arrow">→</div>
+      <div class="match-right">
+        <select id="m0_4">
+          <option value="">— select —</option>
+          <option value="A">A. Clipping</option>
+          <option value="B">B. Blending</option>
+          <option value="C">C. Borrowing</option>
+          <option value="D">D. Acronym</option>
+          <option value="E">E. Conversion</option>
+        </select>
+      </div>
+    </div>
+    <div class="fb" id="fb0_4"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="q0_5">
+    <div class="q-num">Question 5 &nbsp;·&nbsp; 2 pts</div>
+    <div class="match-row">
+      <div class="match-left">"karaoke" — taken from Japanese into English</div>
+      <div class="match-arrow">→</div>
+      <div class="match-right">
+        <select id="m0_5">
+          <option value="">— select —</option>
+          <option value="A">A. Clipping</option>
+          <option value="B">B. Blending</option>
+          <option value="C">C. Borrowing</option>
+          <option value="D">D. Acronym</option>
+          <option value="E">E. Conversion</option>
+        </select>
+      </div>
+    </div>
+    <div class="fb" id="fb0_5"></div>
+  </div>
+
+  <span class="section-label" style="margin-top:1.5rem;display:inline-block">Part 2 – Fill in the Blank (10 pts)</span>
+  <p style="font-size:.85rem;color:#4a5568;margin-bottom:1rem;">Complete each sentence with the correct linguistics term from the word bank.</p>
+
+  <div class="word-bank">
+    <strong>Word Bank:</strong> &nbsp; morphology &nbsp;·&nbsp; phonology &nbsp;·&nbsp; semantics &nbsp;·&nbsp; pragmatics &nbsp;·&nbsp; syntax
+  </div>
+
+  <div class="q-card" id="q0_6">
+    <div class="q-num">Question 6 &nbsp;·&nbsp; 2 pts</div>
+    <div class="fib-row">
+      The study of how words are structured and formed is called
+      <input type="text" class="fib-input" id="f0_6" placeholder="type here">
+      .
+    </div>
+    <div class="fb" id="fb0_6"></div>
+  </div>
+
+  <div class="q-card" id="q0_7">
+    <div class="q-num">Question 7 &nbsp;·&nbsp; 2 pts</div>
+    <div class="fib-row">
+      The branch that examines how sounds form patterns in a language is known as
+      <input type="text" class="fib-input" id="f0_7" placeholder="type here">
+      .
+    </div>
+    <div class="fb" id="fb0_7"></div>
+  </div>
+
+  <div class="q-card" id="q0_8">
+    <div class="q-num">Question 8 &nbsp;·&nbsp; 2 pts</div>
+    <div class="fib-row">
+      When we analyze why "fire!" means different things in a theater vs. a shooting range, we are studying
+      <input type="text" class="fib-input" id="f0_8" placeholder="type here">
+      .
+    </div>
+    <div class="fb" id="fb0_8"></div>
+  </div>
+
+  <div class="q-card" id="q0_9">
+    <div class="q-num">Question 9 &nbsp;·&nbsp; 2 pts</div>
+    <div class="fib-row">
+      The study of how words are arranged into correct sentences is called
+      <input type="text" class="fib-input" id="f0_9" placeholder="type here">
+      .
+    </div>
+    <div class="fb" id="fb0_9"></div>
+  </div>
+
+  <div class="q-card" id="q0_10">
+    <div class="q-num">Question 10 &nbsp;·&nbsp; 2 pts</div>
+    <div class="fib-row">
+      The branch that deals with the literal meaning of words and phrases is
+      <input type="text" class="fib-input" id="f0_10" placeholder="type here">
+      .
+    </div>
+    <div class="fb" id="fb0_10"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-submit" onclick="gradeModule(0)">Submit Module 2</button>
+    
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     MODULE 3
+════════════════════════════════════════ -->
+<div class="module-panel" id="panel1">
+  <div class="mod-intro">
+    <h2>Module 3 &nbsp;·&nbsp; Knowing All About NOUNS</h2>
+    <p>Part 1: Error Correction &nbsp;|&nbsp; Part 2: Noun Hunt &amp; Plural Forms &nbsp;|&nbsp; 20 points</p>
+  </div>
+
+  <div class="score-banner" id="score1">
+    <h3>Your Score</h3>
+    <div class="score-big" id="scoreNum1"></div>
+    <div class="score-bar-wrap"><div class="score-bar" id="scoreBar1"></div></div>
+    <div class="score-meta"><span id="scoreFrac1"></span><span id="scorePct1"></span></div>
+    <div class="score-msg" id="scoreMsg1" style="margin-top:8px"></div>
+  </div>
+
+  <span class="section-label">Part 1 – Error Correction (10 pts)</span>
+  <p style="font-size:.85rem;color:#4a5568;margin-bottom:1rem;">Each sentence has one noun error (wrong plural form or wrong noun form). Write the corrected word or phrase only.</p>
+
+  <div class="q-card" id="q1_1">
+    <div class="q-num">Question 1 &nbsp;·&nbsp; 2 pts</div>
+    <div class="err-sentence">The students brought three <strong>boxs</strong> of supplies for the feeding program.</div>
+    <div class="corr-row">
+      <span class="corr-label">Correction:</span>
+      <input type="text" class="corr-input" id="e1_1" placeholder="Write the correct word here">
+    </div>
+    <div class="fb" id="fb1_1"></div>
+  </div>
+
+  <div class="q-card" id="q1_2">
+    <div class="q-num">Question 2 &nbsp;·&nbsp; 2 pts</div>
+    <div class="err-sentence">She felt a strong feeling of <strong>lonely</strong> after moving to a new city.</div>
+    <div class="corr-row">
+      <span class="corr-label">Correction:</span>
+      <input type="text" class="corr-input" id="e1_2" placeholder="Write the correct word here">
+    </div>
+    <div class="fb" id="fb1_2"></div>
+  </div>
+
+  <div class="q-card" id="q1_3">
+    <div class="q-num">Question 3 &nbsp;·&nbsp; 2 pts</div>
+    <div class="err-sentence">The <strong>childs</strong> played quietly in the school garden after lunch.</div>
+    <div class="corr-row">
+      <span class="corr-label">Correction:</span>
+      <input type="text" class="corr-input" id="e1_3" placeholder="Write the correct word here">
+    </div>
+    <div class="fb" id="fb1_3"></div>
+  </div>
+
+  <div class="q-card" id="q1_4">
+    <div class="q-num">Question 4 &nbsp;·&nbsp; 2 pts</div>
+    <div class="err-sentence">He admired the <strong>beautiness</strong> of the sunset from the hilltop.</div>
+    <div class="corr-row">
+      <span class="corr-label">Correction:</span>
+      <input type="text" class="corr-input" id="e1_4" placeholder="Write the correct word here">
+    </div>
+    <div class="fb" id="fb1_4"></div>
+  </div>
+
+  <div class="q-card" id="q1_5">
+    <div class="q-num">Question 5 &nbsp;·&nbsp; 2 pts</div>
+    <div class="err-sentence">The <strong>flock of birds</strong> is a common noun. &nbsp;(True or False?)</div>
+    <div class="corr-row">
+      <span class="corr-label">Answer:</span>
+      <select id="e1_5" style="border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:.88rem;outline:none;flex:1;max-width:220px">
+        <option value="">— select —</option>
+        <option value="false">False – it is a collective noun</option>
+        <option value="true">True – it is a common noun</option>
+      </select>
+    </div>
+    <div class="fb" id="fb1_5"></div>
+  </div>
+
+  <span class="section-label" style="margin-top:1.5rem;display:inline-block">Part 2 – Plural Forms (10 pts, 2 pts each)</span>
+  <p style="font-size:.85rem;color:#4a5568;margin-bottom:1rem;">Write the correct plural form of each noun.</p>
+
+  <div class="q-card" id="q1_6">
+    <div class="q-num">Question 6 &nbsp;·&nbsp; 2 pts</div>
+    <div class="fib-row">woman &nbsp;→&nbsp; <input type="text" class="fib-input" id="p1_6" placeholder="plural form"></div>
+    <div class="fb" id="fb1_6"></div>
+  </div>
+  <div class="q-card" id="q1_7">
+    <div class="q-num">Question 7 &nbsp;·&nbsp; 2 pts</div>
+    <div class="fib-row">hero &nbsp;→&nbsp; <input type="text" class="fib-input" id="p1_7" placeholder="plural form"></div>
+    <div class="fb" id="fb1_7"></div>
+  </div>
+  <div class="q-card" id="q1_8">
+    <div class="q-num">Question 8 &nbsp;·&nbsp; 2 pts</div>
+    <div class="fib-row">city &nbsp;→&nbsp; <input type="text" class="fib-input" id="p1_8" placeholder="plural form"></div>
+    <div class="fb" id="fb1_8"></div>
+  </div>
+  <div class="q-card" id="q1_9">
+    <div class="q-num">Question 9 &nbsp;·&nbsp; 2 pts</div>
+    <div class="fib-row">tooth &nbsp;→&nbsp; <input type="text" class="fib-input" id="p1_9" placeholder="plural form"></div>
+    <div class="fb" id="fb1_9"></div>
+  </div>
+  <div class="q-card" id="q1_10">
+    <div class="q-num">Question 10 &nbsp;·&nbsp; 2 pts</div>
+    <div class="fib-row">leaf &nbsp;→&nbsp; <input type="text" class="fib-input" id="p1_10" placeholder="plural form"></div>
+    <div class="fb" id="fb1_10"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-submit" onclick="gradeModule(1)">Submit Module 3</button>
+    
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     MODULE 4
+════════════════════════════════════════ -->
+<div class="module-panel" id="panel2">
+  <div class="mod-intro">
+    <h2>Module 4 &nbsp;·&nbsp; Substituting with PRONOUNS</h2>
+    <p>Part 1: Sentence Transformation &nbsp;|&nbsp; Part 2: Spot &amp; Classify &nbsp;|&nbsp; 20 points</p>
+  </div>
+
+  <div class="score-banner" id="score2">
+    <h3>Your Score</h3>
+    <div class="score-big" id="scoreNum2"></div>
+    <div class="score-bar-wrap"><div class="score-bar" id="scoreBar2"></div></div>
+    <div class="score-meta"><span id="scoreFrac2"></span><span id="scorePct2"></span></div>
+    <div class="score-msg" id="scoreMsg2" style="margin-top:8px"></div>
+  </div>
+
+  <span class="section-label">Part 1 – Pronoun-Antecedent Agreement (10 pts)</span>
+  <p style="font-size:.85rem;color:#4a5568;margin-bottom:1rem;">Choose the correct pronoun to complete each sentence.</p>
+
+  <div class="q-card" id="q2_1">
+    <div class="q-num">Question 1 &nbsp;·&nbsp; 2 pts</div>
+    <div class="q-text">Each of the students must submit ___ own assignment.</div>
+    <select id="pr2_1" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none">
+      <option value="">— select the correct pronoun —</option>
+      <option value="a">his or her</option>
+      <option value="b">their</option>
+      <option value="c">its</option>
+    </select>
+    <div class="fb" id="fb2_1"></div>
+  </div>
+
+  <div class="q-card" id="q2_2">
+    <div class="q-num">Question 2 &nbsp;·&nbsp; 2 pts</div>
+    <div class="q-text">Maria and Lena brought ___ own lunch boxes to school today.</div>
+    <select id="pr2_2" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none">
+      <option value="">— select the correct pronoun —</option>
+      <option value="a">her</option>
+      <option value="b">his</option>
+      <option value="c">their</option>
+    </select>
+    <div class="fb" id="fb2_2"></div>
+  </div>
+
+  <div class="q-card" id="q2_3">
+    <div class="q-num">Question 3 &nbsp;·&nbsp; 2 pts</div>
+    <div class="q-text">The committee announced ___ decision at the end of the meeting.</div>
+    <select id="pr2_3" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none">
+      <option value="">— select the correct pronoun —</option>
+      <option value="a">their</option>
+      <option value="b">its</option>
+      <option value="c">his</option>
+    </select>
+    <div class="fb" id="fb2_3"></div>
+  </div>
+
+  <div class="q-card" id="q2_4">
+    <div class="q-num">Question 4 &nbsp;·&nbsp; 2 pts</div>
+    <div class="q-text">The cat licked ___ paw after the meal.</div>
+    <select id="pr2_4" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none">
+      <option value="">— select the correct pronoun —</option>
+      <option value="a">their</option>
+      <option value="b">his</option>
+      <option value="c">its</option>
+    </select>
+    <div class="fb" id="fb2_4"></div>
+  </div>
+
+  <div class="q-card" id="q2_5">
+    <div class="q-num">Question 5 &nbsp;·&nbsp; 2 pts</div>
+    <div class="q-text">Neither of the boys finished ___ homework on time.</div>
+    <select id="pr2_5" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none">
+      <option value="">— select the correct pronoun —</option>
+      <option value="a">his</option>
+      <option value="b">their</option>
+      <option value="c">its</option>
+    </select>
+    <div class="fb" id="fb2_5"></div>
+  </div>
+
+  <span class="section-label" style="margin-top:1.5rem;display:inline-block">Part 2 – Spot &amp; Classify (10 pts)</span>
+  <p style="font-size:.85rem;color:#4a5568;margin-bottom:1rem;">Identify the pronoun in each sentence and select its type from the dropdown.</p>
+
+  <div class="q-card" id="q2_6">
+    <div class="q-num">Question 6 &nbsp;·&nbsp; 2 pts</div>
+    <div class="spot-sent">Those are the books our teacher recommended for the exam.</div>
+    <div class="spot-row">
+      <div class="spot-part">
+        <label>Pronoun</label>
+        <input type="text" id="sp2_6w" placeholder="write the pronoun">
+      </div>
+      <div class="spot-part">
+        <label>Type</label>
+        <select id="sp2_6t">
+          <option value="">— type —</option>
+          <option value="personal">Personal</option>
+          <option value="demonstrative">Demonstrative</option>
+          <option value="interrogative">Interrogative</option>
+          <option value="relative">Relative</option>
+          <option value="reflexive">Reflexive / Intensive</option>
+        </select>
+      </div>
+    </div>
+    <div class="fb" id="fb2_6"></div>
+  </div>
+
+  <div class="q-card" id="q2_7">
+    <div class="q-num">Question 7 &nbsp;·&nbsp; 2 pts</div>
+    <div class="spot-sent">Who told you about the change in the schedule?</div>
+    <div class="spot-row">
+      <div class="spot-part">
+        <label>Pronoun</label>
+        <input type="text" id="sp2_7w" placeholder="write the pronoun">
+      </div>
+      <div class="spot-part">
+        <label>Type</label>
+        <select id="sp2_7t">
+          <option value="">— type —</option>
+          <option value="personal">Personal</option>
+          <option value="demonstrative">Demonstrative</option>
+          <option value="interrogative">Interrogative</option>
+          <option value="relative">Relative</option>
+          <option value="reflexive">Reflexive / Intensive</option>
+        </select>
+      </div>
+    </div>
+    <div class="fb" id="fb2_7"></div>
+  </div>
+
+  <div class="q-card" id="q2_8">
+    <div class="q-num">Question 8 &nbsp;·&nbsp; 2 pts</div>
+    <div class="spot-sent">She finished the report herself, without any help from others.</div>
+    <div class="spot-row">
+      <div class="spot-part">
+        <label>Pronoun</label>
+        <input type="text" id="sp2_8w" placeholder="write the pronoun">
+      </div>
+      <div class="spot-part">
+        <label>Type</label>
+        <select id="sp2_8t">
+          <option value="">— type —</option>
+          <option value="personal">Personal</option>
+          <option value="demonstrative">Demonstrative</option>
+          <option value="interrogative">Interrogative</option>
+          <option value="relative">Relative</option>
+          <option value="reflexive">Reflexive / Intensive</option>
+        </select>
+      </div>
+    </div>
+    <div class="fb" id="fb2_8"></div>
+  </div>
+
+  <div class="q-card" id="q2_9">
+    <div class="q-num">Question 9 &nbsp;·&nbsp; 2 pts</div>
+    <div class="spot-sent">He left early because he had an appointment downtown.</div>
+    <div class="spot-row">
+      <div class="spot-part">
+        <label>Pronoun</label>
+        <input type="text" id="sp2_9w" placeholder="write the pronoun">
+      </div>
+      <div class="spot-part">
+        <label>Type</label>
+        <select id="sp2_9t">
+          <option value="">— type —</option>
+          <option value="personal">Personal</option>
+          <option value="demonstrative">Demonstrative</option>
+          <option value="interrogative">Interrogative</option>
+          <option value="relative">Relative</option>
+          <option value="reflexive">Reflexive / Intensive</option>
+        </select>
+      </div>
+    </div>
+    <div class="fb" id="fb2_9"></div>
+  </div>
+
+  <div class="q-card" id="q2_10">
+    <div class="q-num">Question 10 &nbsp;·&nbsp; 2 pts</div>
+    <div class="spot-sent">The student who won the quiz bee represented the entire school.</div>
+    <div class="spot-row">
+      <div class="spot-part">
+        <label>Pronoun</label>
+        <input type="text" id="sp2_10w" placeholder="write the pronoun">
+      </div>
+      <div class="spot-part">
+        <label>Type</label>
+        <select id="sp2_10t">
+          <option value="">— type —</option>
+          <option value="personal">Personal</option>
+          <option value="demonstrative">Demonstrative</option>
+          <option value="interrogative">Interrogative</option>
+          <option value="relative">Relative</option>
+          <option value="reflexive">Reflexive / Intensive</option>
+        </select>
+      </div>
+    </div>
+    <div class="fb" id="fb2_10"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-submit" onclick="gradeModule(2)">Submit Module 4</button>
+    
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     MODULE 5
+════════════════════════════════════════ -->
+<div class="module-panel" id="panel3">
+  <div class="mod-intro">
+    <h2>Module 5 &nbsp;·&nbsp; Understanding VERBS</h2>
+    <p>Part 1: Modal Verb Error Correction &nbsp;|&nbsp; Part 2: Verb Classification &nbsp;|&nbsp; 20 points</p>
+  </div>
+
+  <div class="score-banner" id="score3">
+    <h3>Your Score</h3>
+    <div class="score-big" id="scoreNum3"></div>
+    <div class="score-bar-wrap"><div class="score-bar" id="scoreBar3"></div></div>
+    <div class="score-meta"><span id="scoreFrac3"></span><span id="scorePct3"></span></div>
+    <div class="score-msg" id="scoreMsg3" style="margin-top:8px"></div>
+  </div>
+
+  <span class="section-label">Part 1 – Modal Verb Correction (10 pts)</span>
+  <p style="font-size:.85rem;color:#4a5568;margin-bottom:1rem;">Each sentence uses the wrong modal verb. Select the correct one from the dropdown.</p>
+
+  <div class="q-card" id="q3_1">
+    <div class="q-num">Question 1 &nbsp;·&nbsp; 2 pts</div>
+    <div class="err-sentence">You <strong>might</strong> wear a seatbelt; it is the law in this country. <em>(Needs strong obligation)</em></div>
+    <div class="corr-row">
+      <span class="corr-label">Correct modal:</span>
+      <select id="mv3_1" style="border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:.88rem;outline:none;flex:1;max-width:220px">
+        <option value="">— select —</option>
+        <option value="must">must</option>
+        <option value="should">should</option>
+        <option value="could">could</option>
+        <option value="may">may</option>
+      </select>
+    </div>
+    <div class="fb" id="fb3_1"></div>
+  </div>
+
+  <div class="q-card" id="q3_2">
+    <div class="q-num">Question 2 &nbsp;·&nbsp; 2 pts</div>
+    <div class="err-sentence">She <strong>must</strong> speak Japanese fluently when she was ten years old. <em>(Needs past ability)</em></div>
+    <div class="corr-row">
+      <span class="corr-label">Correct modal:</span>
+      <select id="mv3_2" style="border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:.88rem;outline:none;flex:1;max-width:220px">
+        <option value="">— select —</option>
+        <option value="could">could</option>
+        <option value="would">would</option>
+        <option value="should">should</option>
+        <option value="might">might</option>
+      </select>
+    </div>
+    <div class="fb" id="fb3_2"></div>
+  </div>
+
+  <div class="q-card" id="q3_3">
+    <div class="q-num">Question 3 &nbsp;·&nbsp; 2 pts</div>
+    <div class="err-sentence"><strong>Must</strong> I use your umbrella for a while? <em>(Needs polite request)</em></div>
+    <div class="corr-row">
+      <span class="corr-label">Correct modal:</span>
+      <select id="mv3_3" style="border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:.88rem;outline:none;flex:1;max-width:220px">
+        <option value="">— select —</option>
+        <option value="may">May</option>
+        <option value="must">Must</option>
+        <option value="will">Will</option>
+        <option value="shall">Shall</option>
+      </select>
+    </div>
+    <div class="fb" id="fb3_3"></div>
+  </div>
+
+  <div class="q-card" id="q3_4">
+    <div class="q-num">Question 4 &nbsp;·&nbsp; 2 pts</div>
+    <div class="err-sentence">Students <strong>must not</strong> forget their ID at home. <em>(Needs gentle advice, not prohibition)</em></div>
+    <div class="corr-row">
+      <span class="corr-label">Correct modal:</span>
+      <select id="mv3_4" style="border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:.88rem;outline:none;flex:1;max-width:220px">
+        <option value="">— select —</option>
+        <option value="should not">should not</option>
+        <option value="must not">must not</option>
+        <option value="cannot">cannot</option>
+        <option value="will not">will not</option>
+      </select>
+    </div>
+    <div class="fb" id="fb3_4"></div>
+  </div>
+
+  <div class="q-card" id="q3_5">
+    <div class="q-num">Question 5 &nbsp;·&nbsp; 2 pts</div>
+    <div class="err-sentence">The parcel <strong>will</strong> arrive either today or tomorrow. <em>(Needs weak/uncertain possibility)</em></div>
+    <div class="corr-row">
+      <span class="corr-label">Correct modal:</span>
+      <select id="mv3_5" style="border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;font-size:.88rem;outline:none;flex:1;max-width:220px">
+        <option value="">— select —</option>
+        <option value="might">might</option>
+        <option value="must">must</option>
+        <option value="shall">shall</option>
+        <option value="would">would</option>
+      </select>
+    </div>
+    <div class="fb" id="fb3_5"></div>
+  </div>
+
+  <span class="section-label" style="margin-top:1.5rem;display:inline-block">Part 2 – Verb Classification (10 pts)</span>
+  <p style="font-size:.85rem;color:#4a5568;margin-bottom:1rem;">Classify the bold verb in each sentence using the dropdown. Then briefly explain your answer.</p>
+
+  <div class="q-card" id="q3_6">
+    <div class="q-num">Question 6 &nbsp;·&nbsp; 2 pts</div>
+    <div class="q-text">The dog <strong>BARKED</strong> loudly at the stranger near the gate.</div>
+    <select id="vc3_6" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none;margin-bottom:8px">
+      <option value="">— select verb type —</option>
+      <option value="transitive">Transitive Action</option>
+      <option value="intransitive">Intransitive Action</option>
+      <option value="linking">Linking Verb</option>
+      <option value="modal">Auxiliary / Modal</option>
+    </select>
+    <div class="fb" id="fb3_6"></div>
+  </div>
+
+  <div class="q-card" id="q3_7">
+    <div class="q-num">Question 7 &nbsp;·&nbsp; 2 pts</div>
+    <div class="q-text">She <strong>PAINTED</strong> a beautiful mural on the classroom wall.</div>
+    <select id="vc3_7" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none;margin-bottom:8px">
+      <option value="">— select verb type —</option>
+      <option value="transitive">Transitive Action</option>
+      <option value="intransitive">Intransitive Action</option>
+      <option value="linking">Linking Verb</option>
+      <option value="modal">Auxiliary / Modal</option>
+    </select>
+    <div class="fb" id="fb3_7"></div>
+  </div>
+
+  <div class="q-card" id="q3_8">
+    <div class="q-num">Question 8 &nbsp;·&nbsp; 2 pts</div>
+    <div class="q-text">The flowers <strong>SMELL</strong> wonderful after the morning rain.</div>
+    <select id="vc3_8" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none;margin-bottom:8px">
+      <option value="">— select verb type —</option>
+      <option value="transitive">Transitive Action</option>
+      <option value="intransitive">Intransitive Action</option>
+      <option value="linking">Linking Verb</option>
+      <option value="modal">Auxiliary / Modal</option>
+    </select>
+    <div class="fb" id="fb3_8"></div>
+  </div>
+
+  <div class="q-card" id="q3_9">
+    <div class="q-num">Question 9 &nbsp;·&nbsp; 2 pts</div>
+    <div class="q-text">He <strong>SHOULD</strong> study tonight to prepare for tomorrow's quiz.</div>
+    <select id="vc3_9" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none;margin-bottom:8px">
+      <option value="">— select verb type —</option>
+      <option value="transitive">Transitive Action</option>
+      <option value="intransitive">Intransitive Action</option>
+      <option value="linking">Linking Verb</option>
+      <option value="modal">Auxiliary / Modal</option>
+    </select>
+    <div class="fb" id="fb3_9"></div>
+  </div>
+
+  <div class="q-card" id="q3_10">
+    <div class="q-num">Question 10 &nbsp;·&nbsp; 2 pts</div>
+    <div class="q-text">The athlete <strong>GREW</strong> confident as the competition drew near.</div>
+    <select id="vc3_10" style="width:100%;padding:9px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem;outline:none;margin-bottom:8px">
+      <option value="">— select verb type —</option>
+      <option value="transitive">Transitive Action</option>
+      <option value="intransitive">Intransitive Action</option>
+      <option value="linking">Linking Verb</option>
+      <option value="modal">Auxiliary / Modal</option>
+    </select>
+    <div class="fb" id="fb3_10"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-submit" onclick="gradeModule(3)">Submit Module 5</button>
+    
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     RESULTS PANEL
+════════════════════════════════════════ -->
+<div class="module-panel" id="panel4" style="display:none">
+  <div id="results-placeholder" style="text-align:center;padding:3rem 1rem;color:#718096">
+    <div style="font-size:2.5rem;margin-bottom:1rem">📋</div>
+    <p style="font-size:1rem;font-weight:500;margin-bottom:6px">No results yet</p>
+    <p style="font-size:.85rem">Submit at least one module to see your scores here.</p>
+  </div>
+  <div id="results-content" style="display:none">
+    <div class="summary-card">
+      <div id="studentNameDisplay" style="font-size:.85rem;color:#718096;margin-bottom:.3rem;letter-spacing:.03em"></div>
+      <div id="studentEmailDisplay" style="font-size:.78rem;color:#a0aec0;margin-bottom:1rem"></div>
+      <div class="emoji-result" id="summaryEmoji">🎉</div>
+      <div class="total-score" id="summaryTotal">—</div>
+      <div class="total-label">out of 80 points</div>
+      <div id="summaryBar" style="background:#e2e8f0;border-radius:20px;height:20px;overflow:hidden;margin:1rem 0">
+        <div id="summaryBarFill" style="height:100%;border-radius:20px;transition:width 1s ease;background:#1F3864"></div>
+      </div>
+      <div id="summaryMessage" style="font-size:.9rem;color:#4a5568;margin-bottom:1rem"></div>
+      <div class="mod-scores-grid">
+        <div class="mod-score-cell"><div class="mscore" id="rs0">—</div><div class="mlabel">Module 2</div></div>
+        <div class="mod-score-cell"><div class="mscore" id="rs1">—</div><div class="mlabel">Module 3</div></div>
+        <div class="mod-score-cell"><div class="mscore" id="rs2">—</div><div class="mlabel">Module 4</div></div>
+        <div class="mod-score-cell"><div class="mscore" id="rs3">—</div><div class="mlabel">Module 5</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .main -->
+
+<script>
+const modScores = [null, null, null, null];
+
+const answers = {
+  0: {
+    m0_1: "B", m0_2: "A", m0_3: "D", m0_4: "E", m0_5: "C",
+    f0_6: ["morphology"], f0_7: ["phonology"], f0_8: ["pragmatics"], f0_9: ["syntax"], f0_10: ["semantics"]
+  },
+  1: {
+    e1_1: ["boxes"], e1_2: ["loneliness"], e1_3: ["children"], e1_4: ["beauty"], e1_5: "false",
+    p1_6: ["women"], p1_7: ["heroes"], p1_8: ["cities"], p1_9: ["teeth"], p1_10: ["leaves"]
+  },
+  2: {
+    pr2_1: "a", pr2_2: "c", pr2_3: "b", pr2_4: "c", pr2_5: "a",
+    sp2_6: { word: ["those"], type: "demonstrative" },
+    sp2_7: { word: ["who"], type: "interrogative" },
+    sp2_8: { word: ["herself"], type: "reflexive" },
+    sp2_9: { word: ["he"], type: "personal" },
+    sp2_10: { word: ["who"], type: "relative" }
+  },
+  3: {
+    mv3_1: "must", mv3_2: "could", mv3_3: "may", mv3_4: "should not", mv3_5: "might",
+    vc3_6: "intransitive", vc3_7: "transitive", vc3_8: "linking", vc3_9: "modal", vc3_10: "linking"
+  }
+};
+
+const feedbacks = {
+  0: {
+    m0_1: { c: "Correct! Blending merges parts of two words — 'br-' from breakfast and '-unch' from lunch.", w: "Not quite. Brunch merges parts of two words — that's blending." },
+    m0_2: { c: "Correct! 'Phone' is clipped from 'telephone' — the beginning is dropped.", w: "Not quite. Phone is a shortened form of telephone — that's clipping." },
+    m0_3: { c: "Correct! NASA is pronounced as one word formed from initial letters — an acronym.", w: "Not quite. NASA is formed from initials and pronounced as one word — that's an acronym." },
+    m0_4: { c: "Correct! 'Google' shifted from noun to verb with no change in form — that's conversion.", w: "Not quite. Google changed its word class without changing its form — that's conversion." },
+    m0_5: { c: "Correct! 'Karaoke' was adopted directly from Japanese — that's borrowing.", w: "Not quite. Taking a word from another language is called borrowing." },
+    f0_6: { c: "Correct! Morphology studies word structure and formation.", w: "Not quite. The answer is morphology — the study of word structure." },
+    f0_7: { c: "Correct! Phonology examines sound patterns within a language.", w: "Not quite. The answer is phonology — the study of sound patterns in language." },
+    f0_8: { c: "Correct! Pragmatics studies how context shapes meaning.", w: "Not quite. The answer is pragmatics — meaning depends on context (theater vs. range)." },
+    f0_9: { c: "Correct! Syntax deals with rules for arranging words in sentences.", w: "Not quite. The answer is syntax — how words are arranged into sentences." },
+    f0_10: { c: "Correct! Semantics is the study of literal word and phrase meaning.", w: "Not quite. The answer is semantics — the study of literal meaning." }
+  },
+  1: {
+    e1_1: { c: "Correct! Nouns ending in -x add -es to form the plural.", w: "Not quite. The correct plural of 'box' is 'boxes' (add -es after -x)." },
+    e1_2: { c: "Correct! 'Lonely' is an adjective; the noun form is 'loneliness'.", w: "Not quite. 'Lonely' is an adjective. The abstract noun form is 'loneliness'." },
+    e1_3: { c: "Correct! 'Child' has the irregular plural 'children'.", w: "Not quite. 'Child' is irregular — its plural is 'children', not 'childs'." },
+    e1_4: { c: "Correct! 'Beautiness' is not a word; the correct abstract noun is 'beauty'.", w: "Not quite. 'Beautiness' does not exist. The correct abstract noun is 'beauty'." },
+    e1_5: { c: "Correct! 'Flock' is a collective noun — it names a group as a single unit.", w: "Not quite. 'Flock' is a collective noun, not a common noun." },
+    p1_6: { c: "Correct! The plural of 'woman' is 'women' — an internal vowel change.", w: "Not quite. 'Woman' is irregular — its plural is 'women'." },
+    p1_7: { c: "Correct! 'Hero' ends in consonant + o, so we add -es.", w: "Not quite. 'Hero' takes -es: heroes." },
+    p1_8: { c: "Correct! Consonant + y → change y to i, add -es.", w: "Not quite. 'City' ends in consonant + y → cities." },
+    p1_9: { c: "Correct! 'Tooth' is irregular — plural is 'teeth'.", w: "Not quite. 'Tooth' is irregular. Its plural is 'teeth'." },
+    p1_10: { c: "Correct! Nouns ending in -f change to -ves: leaf → leaves.", w: "Not quite. 'Leaf' ends in -f → change to -ves: leaves." }
+  },
+  2: {
+    pr2_1: { c: "Correct! 'Each' is singular, so 'his or her' is the formal agreement.", w: "Not quite. 'Each' is singular — use 'his or her' for formal agreement." },
+    pr2_2: { c: "Correct! 'Maria and Lena' is plural — use 'their'.", w: "Not quite. Two people joined by 'and' = plural → 'their'." },
+    pr2_3: { c: "Correct! 'Committee' is a collective noun treated as singular — use 'its'.", w: "Not quite. A collective noun as a unit takes 'its'." },
+    pr2_4: { c: "Correct! A single cat = 'its'.", w: "Not quite. For a singular animal with unspecified gender, use 'its'." },
+    pr2_5: { c: "Correct! 'Neither' is singular; 'boys' are male → 'his'.", w: "Not quite. 'Neither' is singular and refers to boys → use 'his'." },
+    sp2_6: { c: "Correct! 'Those' is a demonstrative pronoun — plural, far.", w: "Not quite. 'Those' is a demonstrative pronoun pointing to specific nouns (plural, far)." },
+    sp2_7: { c: "Correct! 'Who' opens a question asking about a person — interrogative.", w: "Not quite. 'Who' here introduces a question → it's an interrogative pronoun." },
+    sp2_8: { c: "Correct! 'Herself' reflects the action back to the subject — reflexive.", w: "Not quite. 'Herself' reflects the action to the subject → reflexive pronoun." },
+    sp2_9: { c: "Correct! 'He' is a third-person singular masculine personal pronoun.", w: "Not quite. 'He' substitutes for a specific person — it's a personal pronoun." },
+    sp2_10: { c: "Correct! 'Who' introduces a clause modifying 'student' — relative pronoun.", w: "Not quite. 'Who' links the clause to 'student' → relative pronoun." }
+  },
+  3: {
+    mv3_1: { c: "Correct! 'Must' expresses legal/strong obligation — 'might' only shows uncertainty.", w: "Not quite. For a law/strong rule, use 'must', not 'might'." },
+    mv3_2: { c: "Correct! 'Could' expresses past ability — 'must' cannot express past ability.", w: "Not quite. Past ability uses 'could', not 'must'." },
+    mv3_3: { c: "Correct! 'May' (or 'Can') is used for polite requests, not 'must'.", w: "Not quite. For a polite request, use 'May' — 'Must' expresses obligation." },
+    mv3_4: { c: "Correct! 'Should not' gives gentle advice; 'must not' is a prohibition.", w: "Not quite. Gentle advice uses 'should not', not the strong prohibition 'must not'." },
+    mv3_5: { c: "Correct! 'Might' expresses weak, uncertain possibility — 'will' implies certainty.", w: "Not quite. Uncertain possibility uses 'might' — 'will' would imply certainty." },
+    vc3_6: { c: "Correct! 'Barked' has no direct object — the action doesn't transfer — intransitive.", w: "Not quite. 'Barked' has no object, so it's intransitive." },
+    vc3_7: { c: "Correct! 'Painted' has a direct object ('mural') — transitive action verb.", w: "Not quite. 'Painted a mural' — the verb has an object, so it's transitive." },
+    vc3_8: { c: "Correct! 'Smell' links the subject to the adjective 'wonderful' — linking verb.", w: "Not quite. 'Smell' connects subject to an adjective → linking verb." },
+    vc3_9: { c: "Correct! 'Should' is a modal auxiliary expressing advice.", w: "Not quite. 'Should' is a modal/auxiliary verb expressing advice or recommendation." },
+    vc3_10: { c: "Correct! 'Grew' links subject to adjective 'confident' — linking verb.", w: "Not quite. 'Grew confident' — grew connects subject to an adjective → linking verb." }
+  }
+};
+
+function norm(str) { return str.trim().toLowerCase(); }
+
+function gradeModule(mod) {
+  let score = 0;
+  const max = 20;
+  const ans = answers[mod];
+  const fb = feedbacks[mod];
+
+  if (mod === 0) {
+    ["m0_1","m0_2","m0_3","m0_4","m0_5"].forEach(id => {
+      const el = document.getElementById(id);
+      const val = el.value;
+      const correct = val === ans[id];
+      if (correct) score += 2;
+      styleCard("q0_" + id.split("_")[1], correct);
+      showFb("fb0_" + id.split("_")[1], correct, fb[id]);
+    });
+    ["f0_6","f0_7","f0_8","f0_9","f0_10"].forEach(id => {
+      const el = document.getElementById(id);
+      const val = norm(el.value);
+      const correct = ans[id].includes(val);
+      if (correct) score += 2;
+      const n = id.split("_")[1];
+      styleCard("q0_" + n, correct);
+      showFb("fb0_" + n, correct, fb[id]);
+    });
+  }
+
+  if (mod === 1) {
+    ["e1_1","e1_2","e1_3","e1_4"].forEach(id => {
+      const el = document.getElementById(id);
+      const val = norm(el.value);
+      const correct = ans[id].includes(val);
+      if (correct) score += 2;
+      const n = id.split("_")[1];
+      styleCard("q1_" + n, correct);
+      showFb("fb1_" + n, correct, fb[id]);
+    });
+    const e5 = document.getElementById("e1_5").value;
+    const c5 = e5 === ans["e1_5"];
+    if (c5) score += 2;
+    styleCard("q1_5", c5);
+    showFb("fb1_5", c5, fb["e1_5"]);
+
+    ["p1_6","p1_7","p1_8","p1_9","p1_10"].forEach(id => {
+      const el = document.getElementById(id);
+      const val = norm(el.value);
+      const correct = ans[id].includes(val);
+      if (correct) score += 2;
+      const n = id.split("_")[1];
+      styleCard("q1_" + n, correct);
+      showFb("fb1_" + n, correct, fb[id]);
+    });
+  }
+
+  if (mod === 2) {
+    ["pr2_1","pr2_2","pr2_3","pr2_4","pr2_5"].forEach(id => {
+      const el = document.getElementById(id);
+      const val = el.value;
+      const correct = val === ans[id];
+      if (correct) score += 2;
+      const n = id.split("_")[1];
+      styleCard("q2_" + n, correct);
+      showFb("fb2_" + n, correct, fb[id]);
+    });
+    [6,7,8,9,10].forEach(n => {
+      const w = norm(document.getElementById("sp2_" + n + "w").value);
+      const t = document.getElementById("sp2_" + n + "t").value;
+      const aKey = "sp2_" + n;
+      const wOk = ans[aKey].word.includes(w);
+      const tOk = t === ans[aKey].type;
+      const correct = wOk && tOk;
+      if (correct) score += 2;
+      styleCard("q2_" + n, correct);
+      showFb("fb2_" + n, correct, fb[aKey]);
+    });
+  }
+
+  if (mod === 3) {
+    ["mv3_1","mv3_2","mv3_3","mv3_4","mv3_5"].forEach(id => {
+      const el = document.getElementById(id);
+      const val = el.value;
+      const correct = val === ans[id];
+      if (correct) score += 2;
+      const n = id.split("_")[1];
+      styleCard("q3_" + n, correct);
+      showFb("fb3_" + n, correct, fb[id]);
+    });
+    [6,7,8,9,10].forEach(n => {
+      const val = document.getElementById("vc3_" + n).value;
+      const correct = val === ans["vc3_" + n];
+      if (correct) score += 2;
+      styleCard("q3_" + n, correct);
+      showFb("fb3_" + n, correct, fb["vc3_" + n]);
+    });
+  }
+
+  modScores[mod] = score;
+  showScoreBanner(mod, score, max);
+  updateTabScore(mod, score, max);
+  updateResultsPanel();
+}
+
+function styleCard(id, correct) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove("correct","wrong");
+  el.classList.add(correct ? "correct" : "wrong");
+}
+
+function showFb(id, correct, fbObj) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = "fb " + (correct ? "correct" : "wrong");
+  el.innerHTML = (correct ? "✓ " : "✗ ") + (correct ? fbObj.c : fbObj.w);
+}
+
+function showScoreBanner(mod, score, max) {
+  const banner = document.getElementById("score" + mod);
+  banner.classList.add("show");
+  const pct = Math.round((score / max) * 100);
+  document.getElementById("scoreNum" + mod).textContent = score + " / " + max;
+  document.getElementById("scoreFrac" + mod).textContent = score + " correct points";
+  document.getElementById("scorePct" + mod).textContent = pct + "%";
+  const bar = document.getElementById("scoreBar" + mod);
+  bar.style.width = "0%";
+  bar.style.background = pct >= 75 ? "#38a169" : pct >= 50 ? "#d69e2e" : "#e53e3e";
+  setTimeout(() => { bar.style.width = pct + "%"; }, 100);
+  const msgs = ["Keep going!", "Good effort, review the corrections above.", "Almost there, review the tricky ones!", "Great job!", "Excellent! Outstanding work!"];
+  const idx = pct < 30 ? 0 : pct < 50 ? 1 : pct < 75 ? 2 : pct < 95 ? 3 : 4;
+  document.getElementById("scoreMsg" + mod).textContent = msgs[idx];
+  banner.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function updateTabScore(mod, score, max) {
+  const el = document.getElementById("tabScore" + mod);
+  el.textContent = score + " / " + max + " pts";
+  document.getElementById("tabBtn" + mod).classList.add("done");
+}
+
+function updateResultsPanel() {
+  const submitted = modScores.filter(s => s !== null);
+  if (submitted.length === 0) return;
+  const total = submitted.reduce((a, b) => a + b, 0);
+  const maxTotal = submitted.length * 20;
+
+  document.getElementById("results-placeholder").style.display = "none";
+  document.getElementById("results-content").style.display = "block";
+
+  const name  = document.getElementById('studentName').value.trim();
+  const email = document.getElementById('studentEmail').value.trim();
+  document.getElementById('studentNameDisplay').textContent = '👤  ' + name;
+  document.getElementById('studentEmailDisplay').textContent = email;
+
+  document.getElementById("summaryTotal").textContent = total;
+  const pct = Math.round((total / 80) * 100);
+  document.getElementById("summaryBarFill").style.width = "0%";
+  setTimeout(() => { document.getElementById("summaryBarFill").style.width = pct + "%"; }, 200);
+
+  const emoji = pct >= 90 ? "🏆" : pct >= 75 ? "🎉" : pct >= 60 ? "👍" : pct >= 40 ? "📚" : "💪";
+  document.getElementById("summaryEmoji").textContent = emoji;
+
+  const msg = pct >= 90 ? "Outstanding! You've mastered the material." :
+              pct >= 75 ? "Great work! You have a strong grasp of the concepts." :
+              pct >= 60 ? "Good effort! Review the highlighted corrections to improve further." :
+              pct >= 40 ? "Keep studying! Go back over the modules and try again." :
+                          "Don't give up! Review your notes and retake when ready.";
+  document.getElementById("summaryMessage").textContent = msg;
+
+  [0,1,2,3].forEach(i => {
+    const el = document.getElementById("rs" + i);
+    el.textContent = modScores[i] !== null ? modScores[i] + "/20" : "—";
+  });
+}
+
+function resetModule(mod) {
+  modScores[mod] = null;
+  const panel = document.getElementById("panel" + mod);
+  panel.querySelectorAll("input, select, textarea").forEach(el => { el.value = ""; });
+  panel.querySelectorAll(".q-card").forEach(c => c.classList.remove("correct","wrong"));
+  panel.querySelectorAll(".fb").forEach(f => { f.className = "fb"; f.textContent = ""; });
+  const banner = document.getElementById("score" + mod);
+  banner.classList.remove("show");
+  const ts = document.getElementById("tabScore" + mod);
+  ts.textContent = "Not yet submitted";
+  document.getElementById("tabBtn" + mod).classList.remove("done");
+  updateResultsPanel();
+}
+
+function resetAll() {
+  [0,1,2,3].forEach(resetModule);
+  document.getElementById("results-placeholder").style.display = "block";
+  document.getElementById("results-content").style.display = "none";
+  switchTab(0);
+}
+
+function checkInfoReady() {
+  const name  = document.getElementById('studentName').value.trim();
+  const email = document.getElementById('studentEmail').value.trim();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  document.getElementById('infoError').style.display = 'none';
+  return name.length > 0 && emailOk;
+}
+
+function confirmInfo() {
+  if (!checkInfoReady()) {
+    document.getElementById('infoError').style.display = 'block';
+    return;
+  }
+  const name = document.getElementById('studentName').value.trim();
+  document.getElementById('tabScoreInfo').textContent = name;
+  document.getElementById('tabScoreInfo').style.color = '#38a169';
+  document.getElementById('tabBtnInfo').classList.add('done');
+  switchTab(0);
+}
+
+function switchTab(n) {
+  const infoConfirmed = document.getElementById('tabBtnInfo').classList.contains('done');
+  if (n !== -1 && !infoConfirmed) {
+    document.getElementById('infoError').style.display = 'block';
+    return;
+  }
+  const allPanels = ['panelInfo','panel0','panel1','panel2','panel3','panel4'];
+  allPanels.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.display = 'none'; el.classList.remove('active'); }
+  });
+  const allBtns = ['tabBtnInfo','tabBtn0','tabBtn1','tabBtn2','tabBtn3','tabBtn4'];
+  allBtns.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  if (n === -1) {
+    document.getElementById('panelInfo').style.display = 'block';
+    document.getElementById('panelInfo').classList.add('active');
+    document.getElementById('tabBtnInfo').classList.add('active');
+  } else {
+    const panelId = n === 4 ? 'panel4' : 'panel' + n;
+    const btnId   = n === 4 ? 'tabBtn4' : 'tabBtn' + n;
+    document.getElementById(panelId).style.display = 'block';
+    document.getElementById(panelId).classList.add('active');
+    document.getElementById(btnId).classList.add('active');
+    if (n === 4) updateResultsPanel();
+  }
+}
+</script>
+</body>
+</html>
